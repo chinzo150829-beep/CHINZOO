@@ -1,0 +1,6 @@
+{
+  "name": "Chinzorig Portfolio",
+  "description": "Chinzorig's high-fidelity personal landing page featuring a stunning liquid-glass UI, background video, character entrance animations, and an interactive message system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
