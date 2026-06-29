@@ -3,12 +3,13 @@ import { Language } from './types';
 import AnimatedHeading from './components/AnimatedHeading';
 import FadeIn from './components/FadeIn';
 import ChatModal from './components/ChatModal';
+import FloatingChat from './components/FloatingChat';
 import { Globe, ArrowRight, Trophy, Heart } from 'lucide-react';
 
 const content = {
   en: {
     logo: "CHINZO",
-    navLinks: ["My Story", "Hobbies", "Basketball", "Football"],
+    navLinks: ["My Story", "Hobbies", "🤖 My Idol"],
     heading: "Shaping tomorrow\nwith vision and action.",
     subheading: "Chinzorig. 10 years old. I love playing basketball and football. Building my own world with passion.",
     btnChat: "Chat",
@@ -19,7 +20,7 @@ const content = {
   },
   mn: {
     logo: "CHINZO",
-    navLinks: ["Миний түүх", "Хобби", "Сагсан бөмбөг", "Хөл бөмбөг"],
+    navLinks: ["Миний түүх", "Хобби", "🤖 Миний Идол"],
     heading: "Мөрөөдлөө бүтээж,\nирээдүйгээ тодорхойлно.",
     subheading: "Чинзориг. 10 настай. Би сагсан бөмбөг болон хөл бөмбөг тоглох дуртай. Өөрийнхөө ертөнцийг өөрөө бүтээж байна.",
     btnChat: "Чатлах",
@@ -33,12 +34,13 @@ const content = {
 export default function App() {
   const [lang, setLang] = useState<Language>('mn'); // Default to Mongolian as requested, but easily toggled
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatInitialTab, setChatInitialTab] = useState<'ronaldo' | 'chinzo' | 'guestbook'>('ronaldo');
   const [showHobbyModal, setShowHobbyModal] = useState(false);
 
   const t = content[lang];
 
   return (
-    <main className="relative min-h-screen w-full text-white bg-black flex flex-col justify-between overflow-hidden">
+    <main className="relative min-h-screen w-full text-white bg-black flex flex-col justify-between overflow-hidden animate-fade-in">
       
       {/* Video Background */}
       <div className="absolute inset-0 w-full h-full -z-10 overflow-hidden">
@@ -67,13 +69,16 @@ export default function App() {
               <button
                 key={idx}
                 onClick={() => {
-                  if (idx === 1 || idx === 2) {
+                  if (idx === 0 || idx === 1) {
                     setShowHobbyModal(true);
-                  } else if (idx === 3) {
+                  } else if (idx === 2) {
+                    setChatInitialTab('ronaldo');
                     setIsChatOpen(true);
                   }
                 }}
-                className="text-white hover:text-gray-300 transition-colors duration-200 cursor-pointer font-medium"
+                className={`text-white hover:text-gray-300 transition-all duration-200 cursor-pointer font-medium ${
+                  idx === 2 ? 'bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-amber-300' : ''
+                }`}
               >
                 {link}
               </button>
@@ -95,7 +100,10 @@ export default function App() {
 
             {/* Start a Chat Button */}
             <button
-              onClick={() => setIsChatOpen(true)}
+              onClick={() => {
+                setChatInitialTab('ronaldo');
+                setIsChatOpen(true);
+              }}
               className="bg-white text-black hover:bg-gray-100 px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200 cursor-pointer"
             >
               {t.btnChat}
@@ -128,7 +136,10 @@ export default function App() {
             <FadeIn delay={1200} duration={1000} className="w-full">
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => setIsChatOpen(true)}
+                  onClick={() => {
+                    setChatInitialTab('chinzo');
+                    setIsChatOpen(true);
+                  }}
                   className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-lg font-medium transition-colors duration-200 cursor-pointer text-sm md:text-base"
                 >
                   {t.btnChat}
@@ -172,6 +183,7 @@ export default function App() {
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
         lang={lang}
+        initialTab={chatInitialTab}
       />
 
       {/* Hobby Details Modal */}
@@ -240,6 +252,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setShowHobbyModal(false);
+                  setChatInitialTab('chinzo');
                   setIsChatOpen(true);
                 }}
                 className="text-xs md:text-sm text-white hover:text-gray-300 underline underline-offset-4 cursor-pointer transition-colors"
@@ -250,6 +263,9 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Floating Messenger-style Quick Chat for Chinzo AI */}
+      <FloatingChat lang={lang} />
 
     </main>
   );
