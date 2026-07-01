@@ -129,6 +129,48 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
+// API route for Anime Guessing Game hints
+app.post("/api/anime-hint", async (req, res) => {
+  try {
+    const { animeTitle, userLang = 'mn', level = 1 } = req.body;
+
+    if (!animeTitle) {
+      return res.status(400).json({ error: "Anime title is required." });
+    }
+
+    const systemInstruction = `
+Үүрэг:
+- Чи бол Чинзориг (Chinzo)-ийн AI хувилбар (10 настай хөгжилтэй хүү, аниме болон One Piece-д үхэн хатан дуртай).
+- Хэрэглэгч чиний аниме таах тоглоомыг тоглож байгаа бөгөөд одоо "${animeTitle}" анимег таах гээд зөвлөгөө хүсэж байна (Асуултын дугаар: ${level}).
+- Чи түүнд маш сонирхолтой, хөгжилтэй, тус болохуйц нууц сэжүүр (hint)-ийг Монголоор (хэрэв userLang бол 'mn') эсвэл Англиар (хэрэв 'en') өгөх хэрэгтэй.
+- Чинзогийн өвөрмөц, тайван, найрсаг хэв маягаар ярина. "Баярлалаа", "зүгээр ээ", "хайртай шүү" гэх мэт үгсийг дулаахан ашиглаж болно.
+- Анимегийн нэрийг шууд хэлж ХЭЗЭЭ Ч болохгүй! Зөвхөн дүрүүд, зэвсэг, үйл явдал эсвэл алдартай үгсийнх нь талаар сэжүүр өгнө.
+- Хариултаа хүүхдэд ойлгомжтой, хэт урт биш, урам зориг өгсөн хөгжилтэй хэлбэрээр бичээрэй.
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: `Надад ${animeTitle} анимег таахад туслах 1 богинохон сонирхолтой сэжүүр өгнө үү. Нэрийг нь шууд бүү дурдаарай!` }]
+        }
+      ],
+      config: {
+        systemInstruction: systemInstruction,
+        temperature: 0.9,
+      }
+    });
+
+    const hint = response.text || "Энэ аниме бол маш гоё шүү! Сайн бодоорой. Зүгээр ээ, чи чадна! ❤️";
+    res.json({ hint });
+
+  } catch (error: any) {
+    console.error("Gemini anime-hint error:", error);
+    res.status(500).json({ error: "Failed to generate dynamic AI hint." });
+  }
+});
+
 // Configure development or production builds
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {

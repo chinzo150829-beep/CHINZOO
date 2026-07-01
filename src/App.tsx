@@ -4,12 +4,13 @@ import AnimatedHeading from './components/AnimatedHeading';
 import FadeIn from './components/FadeIn';
 import ChatModal from './components/ChatModal';
 import FloatingChat from './components/FloatingChat';
-import { Globe, ArrowRight, Trophy, Heart } from 'lucide-react';
+import AnimeGameModal from './components/AnimeGameModal';
+import { Globe, ArrowRight, Trophy, Heart, Gamepad2 } from 'lucide-react';
 
 const content = {
   en: {
     logo: "CHINZO",
-    navLinks: ["My Story", "Hobbies", "🤖 My Idol"],
+    navLinks: ["My Story", "Hobbies", "🎮 Anime Game", "🤖 My Idol"],
     heading: "Shaping tomorrow\nwith vision and action.",
     subheading: "Chinzorig. 10 years old. I love playing basketball and football. Building my own world with passion.",
     btnChat: "Chat",
@@ -20,7 +21,7 @@ const content = {
   },
   mn: {
     logo: "CHINZO",
-    navLinks: ["Миний түүх", "Хобби", "🤖 Миний Идол"],
+    navLinks: ["Миний түүх", "Хобби", "🎮 Аниме Тоглоом", "🤖 Миний Идол"],
     heading: "Мөрөөдлөө бүтээж,\nирээдүйгээ тодорхойлно.",
     subheading: "Чинзориг. 10 настай. Би сагсан бөмбөг болон хөл бөмбөг тоглох дуртай. Өөрийнхөө ертөнцийг өөрөө бүтээж байна.",
     btnChat: "Чатлах",
@@ -36,6 +37,7 @@ export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInitialTab, setChatInitialTab] = useState<'ronaldo' | 'chinzo' | 'guestbook'>('ronaldo');
   const [showHobbyModal, setShowHobbyModal] = useState(false);
+  const [isAnimeGameOpen, setIsAnimeGameOpen] = useState(false);
 
   const t = content[lang];
 
@@ -72,12 +74,14 @@ export default function App() {
                   if (idx === 0 || idx === 1) {
                     setShowHobbyModal(true);
                   } else if (idx === 2) {
+                    setIsAnimeGameOpen(true);
+                  } else if (idx === 3) {
                     setChatInitialTab('ronaldo');
                     setIsChatOpen(true);
                   }
                 }}
                 className={`text-white hover:text-gray-300 transition-all duration-200 cursor-pointer font-medium ${
-                  idx === 2 ? 'bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-amber-300' : ''
+                  idx === 3 ? 'bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-amber-300' : ''
                 }`}
               >
                 {link}
@@ -88,6 +92,16 @@ export default function App() {
           {/* Right Action Controls */}
           <div className="flex items-center gap-3">
             
+            {/* Quick Game Launcher */}
+            <button
+              onClick={() => setIsAnimeGameOpen(true)}
+              className="liquid-glass border border-amber-500/20 text-amber-300 hover:text-white rounded-lg px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 hover:bg-amber-500/10 transition-colors cursor-pointer"
+              title={lang === 'en' ? 'Play Anime Guessing Game' : 'Аниме таах тоглоом тоглох'}
+            >
+              <Gamepad2 className="w-3.5 h-3.5 animate-pulse" />
+              <span>{lang === 'mn' ? 'ТОГЛОХ' : 'GAME'}</span>
+            </button>
+
             {/* Language Switcher */}
             <button
               onClick={() => setLang(lang === 'en' ? 'mn' : 'en')}
@@ -266,6 +280,13 @@ export default function App() {
 
       {/* Floating Messenger-style Quick Chat for Chinzo AI */}
       <FloatingChat lang={lang} />
+
+      {/* Anime Guessing Game Modal */}
+      <AnimeGameModal
+        isOpen={isAnimeGameOpen}
+        onClose={() => setIsAnimeGameOpen(false)}
+        lang={lang}
+      />
 
     </main>
   );
