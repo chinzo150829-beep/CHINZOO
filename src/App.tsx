@@ -5,12 +5,13 @@ import FadeIn from './components/FadeIn';
 import ChatModal from './components/ChatModal';
 import FloatingChat from './components/FloatingChat';
 import AnimeGameModal from './components/AnimeGameModal';
+import TyperacerModal from './components/TyperacerModal';
 import { Globe, ArrowRight, Trophy, Heart, Gamepad2 } from 'lucide-react';
 
 const content = {
   en: {
     logo: "CHINZO",
-    navLinks: ["My Story", "Hobbies", "🎮 Anime Game", "🤖 My Idol"],
+    navLinks: ["My Story", "Hobbies", "🎮 Anime Game", "⌨️ Typeracer", "🤖 My Idol"],
     heading: "Shaping tomorrow\nwith vision and action.",
     subheading: "Chinzorig. 10 years old. I love playing basketball and football. Building my own world with passion.",
     btnChat: "Chat",
@@ -21,7 +22,7 @@ const content = {
   },
   mn: {
     logo: "CHINZO",
-    navLinks: ["Миний түүх", "Хобби", "🎮 Аниме Тоглоом", "🤖 Миний Идол"],
+    navLinks: ["Миний түүх", "Хобби", "🎮 Аниме Тоглоом", "⌨️ Typeracer", "🤖 Миний Идол"],
     heading: "Мөрөөдлөө бүтээж,\nирээдүйгээ тодорхойлно.",
     subheading: "Чинзориг. 10 настай. Би сагсан бөмбөг болон хөл бөмбөг тоглох дуртай. Өөрийнхөө ертөнцийг өөрөө бүтээж байна.",
     btnChat: "Чатлах",
@@ -38,6 +39,7 @@ export default function App() {
   const [chatInitialTab, setChatInitialTab] = useState<'ronaldo' | 'chinzo' | 'guestbook'>('ronaldo');
   const [showHobbyModal, setShowHobbyModal] = useState(false);
   const [isAnimeGameOpen, setIsAnimeGameOpen] = useState(false);
+  const [isTyperacerOpen, setIsTyperacerOpen] = useState(false);
 
   const t = content[lang];
 
@@ -71,17 +73,21 @@ export default function App() {
               <button
                 key={idx}
                 onClick={() => {
-                  if (idx === 0 || idx === 1) {
+                  if (link.includes('Typeracer')) {
+                    setIsTyperacerOpen(true);
+                  } else if (link.includes('Story') || link.includes('түүх') || link.includes('Hobbies') || link.includes('Хобби')) {
                     setShowHobbyModal(true);
-                  } else if (idx === 2) {
+                  } else if (link.includes('Game') || link.includes('Тоглоом')) {
                     setIsAnimeGameOpen(true);
-                  } else if (idx === 3) {
+                  } else if (link.includes('Idol') || link.includes('Идол')) {
                     setChatInitialTab('ronaldo');
                     setIsChatOpen(true);
                   }
                 }}
                 className={`text-white hover:text-gray-300 transition-all duration-200 cursor-pointer font-medium ${
-                  idx === 3 ? 'bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-amber-300' : ''
+                  (link.includes('Idol') || link.includes('Идол')) ? 'bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-amber-300' : ''
+                } ${
+                  link.includes('Typeracer') ? 'text-indigo-400 hover:text-indigo-300 font-semibold' : ''
                 }`}
               >
                 {link}
@@ -285,6 +291,13 @@ export default function App() {
       <AnimeGameModal
         isOpen={isAnimeGameOpen}
         onClose={() => setIsAnimeGameOpen(false)}
+        lang={lang}
+      />
+
+      {/* English Typeracer Modal */}
+      <TyperacerModal
+        isOpen={isTyperacerOpen}
+        onClose={() => setIsTyperacerOpen(false)}
         lang={lang}
       />
 
